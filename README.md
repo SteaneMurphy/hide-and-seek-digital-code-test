@@ -14,7 +14,9 @@
 
 ## 👋🏼 Developer Decisions
 
-Please add a high level overview of your decisions here after you have completed the project
+```bash
+# Please add a high level overview of your decisions here after you have completed the project
+```
 
 ## 🎯 The Mission
 
