@@ -10,6 +10,10 @@
 
 ---
 
+## 🎯 Developer Descions
+
+Please add a high level overview of your decisions here after you have completed the project
+
 ## 🎯 The Mission
 
 Create an online book shop that's a joy to use! We're looking for:
@@ -26,11 +30,9 @@ Create an online book shop that's a joy to use! We're looking for:
 There are no Figma Design Files
 
 # It is up to decide how you would like to show the books consistently
-# In line with the outlined requirements
+# In line with the outlined requirements for example on use the 10 books provided
 # Please keep it simple, there is not need to do more than what we have asked for :)
 
-# DO NOT add more than 10 books to the collection
-# The current book data contains exactly 10 books - please use only these
 ```
 
 ---
@@ -285,6 +287,24 @@ import { books, type Book } from "@/lib/books";
 npm install -D jest @testing-library/react @testing-library/jest-dom
 npx jest --init
 ```
+
+### Step 5: Document Your Decisions & Request Feedback
+
+After completing your implementation, add a high-level overview of your decisions to the **[Developer Decisions](#-developer-decisions)** section at the top of this README. Explain:
+
+- **Framework & Libraries** - Why you chose your tech stack
+- **State Management** - Your approach to cart state and why
+- **Architecture** - How you organized components and logic
+- **Testing Strategy** - What you tested and why
+- **Challenges & Learnings** - Any obstacles and how you solved them
+
+**Also include any feedback or questions** you have about this code test
+
+- what was clear?
+- What could be improved?
+- We value your leadership!
+
+This helps us understand your thought process and improves our understand of your perspective.
 
 ---
 
