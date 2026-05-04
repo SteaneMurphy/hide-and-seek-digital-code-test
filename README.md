@@ -28,6 +28,9 @@ There are no Figma Design Files
 # It is up to decide how you would like to show the books consistently
 # In line with the outlined requirements
 # Please keep it simple, there is not need to do more than what we have asked for :)
+
+# DO NOT add more than 10 books to the collection
+# The current book data contains exactly 10 books - please use only these
 ```
 
 ---
@@ -38,8 +41,8 @@ There are no Figma Design Files
 
 #### Shopping Experience
 
-- **Homepage** - Beautiful grid of books with cover image, title, author, SKU & prices
-- **Cart Page** - View all selected books, see totals, remove items
+- **Homepage** - Beautiful grid of books with cover image, title, author, SKU & prices. Only use the book data provided in src/lib/books.ts
+- **Cart Page** - View all selected books, see totals, remove items, route needs to be /cart
 - **Add to Cart** - Click a button, book appears in cart ✨
 - **Remove from Cart** - Changed your mind? No problem, remove it
 - **Cart Persistence** - Cart survives page refreshes (bonus points!)
