@@ -10,7 +10,9 @@
 
 ---
 
-## 🎯 Developer Descions
+<a name="developer-decisions"></a>
+
+## 👋🏼 Developer Decisions
 
 Please add a high level overview of your decisions here after you have completed the project
 
@@ -238,7 +240,7 @@ npx tailwindcss init -p
 
 ## 🚀 Getting Started
 
-### Step 2: Set Up Your Data
+### Step 1: Set Up Your Data
 
 Use the book types and data from `src/lib/books.ts` to set up the database schema:
 
