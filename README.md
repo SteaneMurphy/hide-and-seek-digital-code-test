@@ -72,6 +72,13 @@ There are no Figma Design Files
 - **Smart Hooks** - Custom hooks for reusable logic
 - **Type Safety** - Proper TypeScript types everywhere
 
+#### Naming Conventions
+
+- **Variables & Functions** - Use descriptive, full names (e.g., `shoppingCart` not `cart`, `getUserData` not `getUser`)
+- **Components** - Clear, descriptive names (e.g., `BookCard` not `Card`, `ShoppingCartPage` not `CartPage`)
+- **Constants** - UPPER_SNAKE_CASE for constants (e.g., `MAX_QUANTITY`, `API_BASE_URL`)
+- **Files & Folders** - kebab-case for files (e.g., `book-card.tsx`, `shopping-cart.ts`)
+
 #### State Management
 
 - **Cart State** - Cart must read from centralized state, it's your choice on how
