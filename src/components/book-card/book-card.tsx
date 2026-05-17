@@ -25,7 +25,7 @@ export default function BookCard({ book, onAddToCart }: Props) {
       <div className={styles.body}>
         <h2 className={styles.title}>{book.title}</h2>
         <p className={styles.author}>{book.author}</p>
-        <p className={styles.sku}>SKU: {book.isbn}</p>
+        <p className={styles.isbn}>ISBN: {book.isbn}</p>
         <p className={styles.price}>${book.price.toFixed(2)}</p>
         <button
           className={styles.button}

@@ -15,12 +15,13 @@
 
 .imageWrapper {
   position: relative;
-  aspect-ratio: 2 / 3;
-  background: var(--color-border);
+  aspect-ratio: 3 / 4;
+  background: #ffffff;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .image {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .body {
@@ -43,7 +44,7 @@
   color: var(--color-text-muted);
 }
 
-.sku {
+.isbn {
   font-size: var(--text-xs);
   color: var(--color-text-muted);
   font-family: monospace;
