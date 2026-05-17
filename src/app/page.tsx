@@ -1,6 +1,7 @@
 import { listAllBooks } from "@/server/repositories/books-repository";
 import BookGrid from "@/components/book-grid/book-grid";
 import type { Book } from "@/shared/books";
+import { SITE_NAME } from "@/constants/copy";
 import styles from "./page.module.css";
 
 export default async function HomePage() {
@@ -18,7 +19,7 @@ export default async function HomePage() {
 
   return (
     <main className={styles.page}>
-      <h1 className={styles.heading}>BookHaven</h1>
+      <h1 className={styles.heading}>{SITE_NAME}</h1>
       <BookGrid books={books} />
     </main>
   );

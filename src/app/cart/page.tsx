@@ -6,7 +6,7 @@ import { BUTTONS, CART_PAGE } from "@/constants/copy";
 import { ROUTES } from "@/constants/routes";
 import styles from "./cart.module.css";
 
-export default function CartPage() {
+export default function ShoppingCartPage() {
   const { items, removeItem } = useCartStore();
 
   const total = items.reduce(

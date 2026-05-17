@@ -14,6 +14,5 @@ export const CART_PAGE = {
   TITLE: "Your Cart",
   EMPTY: "Your cart is empty.",
   EMPTY_CTA: "Continue shopping",
-  SUBTOTAL: "Subtotal",
   TOTAL: "Total",
 } as const;
