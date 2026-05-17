@@ -16,3 +16,9 @@ export const CART_PAGE = {
   EMPTY_CTA: "Continue shopping",
   TOTAL: "Total",
 } as const;
+
+export const ERROR_PAGE = {
+  TITLE: "Something went wrong",
+  MESSAGE: "We hit an unexpected error loading this page. Please try again.",
+  RETRY: "Try again",
+} as const;

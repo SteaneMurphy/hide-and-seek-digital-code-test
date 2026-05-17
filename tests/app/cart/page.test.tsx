@@ -9,6 +9,9 @@ jest.mock("next/link", () => ({
 }));
 
 jest.mock("@/store/cart-store");
+jest.mock("@/store/use-cart-hydrated", () => ({
+  useCartHydrated: () => true,
+}));
 import { useCartStore } from "@/store/cart-store";
 
 const mockBook = {
@@ -35,34 +38,35 @@ const mockStore = (useCartStore as unknown as jest.Mock);
 
 describe("ShoppingCartPage", () => {
   it("shows the empty state message when the cart has no items", () => {
-    mockStore.mockReturnValue({ items: [], removeItem: jest.fn() });
+    mockStore.mockImplementation((selector) => selector({ items: [], removeItem: jest.fn() }));
     render(<ShoppingCartPage />);
     expect(screen.getByText(/your cart is empty/i)).toBeInTheDocument();
   });
 
   it("shows a 'Continue shopping' link to / in the empty state", () => {
-    mockStore.mockReturnValue({ items: [], removeItem: jest.fn() });
+    mockStore.mockImplementation((selector) => selector({ items: [], removeItem: jest.fn() }));
     render(<ShoppingCartPage />);
     expect(screen.getByRole("link", { name: /continue shopping/i })).toHaveAttribute("href", "/");
   });
 
   it("renders item titles when the cart has items", () => {
-    mockStore.mockReturnValue({
-      items: [{ book: mockBook, quantity: 1 }],
-      removeItem: jest.fn(),
-    });
+    mockStore.mockImplementation((selector) =>
+      selector({ items: [{ book: mockBook, quantity: 1 }], removeItem: jest.fn() }),
+    );
     render(<ShoppingCartPage />);
     expect(screen.getByText("The Great Gatsby")).toBeInTheDocument();
   });
 
   it("renders the correct total across all items", () => {
-    mockStore.mockReturnValue({
-      items: [
-        { book: mockBook, quantity: 1 },
-        { book: mockBook2, quantity: 1 },
-      ],
-      removeItem: jest.fn(),
-    });
+    mockStore.mockImplementation((selector) =>
+      selector({
+        items: [
+          { book: mockBook, quantity: 1 },
+          { book: mockBook2, quantity: 1 },
+        ],
+        removeItem: jest.fn(),
+      }),
+    );
     render(<ShoppingCartPage />);
     expect(screen.getByText("$25.00")).toBeInTheDocument();
   });

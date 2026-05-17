@@ -2,19 +2,22 @@
 
 import Link from "next/link";
 import { useCartStore } from "@/store/cart-store";
+import { useCartHydrated } from "@/store/use-cart-hydrated";
 import { BUTTONS, CART_PAGE } from "@/constants/copy";
 import { ROUTES } from "@/constants/routes";
 import styles from "./cart.module.css";
 
 export default function ShoppingCartPage() {
-  const { items, removeItem } = useCartStore();
+  const items = useCartStore((state) => state.items);
+  const removeItem = useCartStore((state) => state.removeItem);
+  const hydrated = useCartHydrated();
 
   const total = items.reduce(
     (sum, { book, quantity }) => sum + book.price * quantity,
     0,
   );
 
-  if (items.length === 0) {
+  if (!hydrated || items.length === 0) {
     return (
       <main className={styles.page}>
         <h1 className={styles.heading}>{CART_PAGE.TITLE}</h1>

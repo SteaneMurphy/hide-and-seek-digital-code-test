@@ -9,6 +9,9 @@ jest.mock("next/link", () => ({
 }));
 
 jest.mock("@/store/cart-store");
+jest.mock("@/store/use-cart-hydrated", () => ({
+  useCartHydrated: () => true,
+}));
 import { useCartStore } from "@/store/cart-store";
 
 describe("Header", () => {
