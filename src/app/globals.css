@@ -1,5 +1,59 @@
-/* Baseline reset and white theme.
-   Design tokens (colors, spacing, radii) will land in PR 2. */
+/* Global baseline and design tokens.
+   All UI should consume these custom properties rather than hard-coding values. */
+
+:root {
+  /* Color */
+  --color-bg: #ffffff;
+  --color-surface: #f7f5f2;
+  --color-text: #22252a;
+  --color-text-muted: #6b6e73;
+  --color-border: #ece9e4;
+  --color-accent: #a82c2c;
+  --color-accent-hover: #8a2424;
+  --color-accent-fg: #ffffff;
+  --color-secondary: #4a6b5d;
+
+  /* Spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Type scale */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 28px;
+  --text-3xl: 36px;
+
+  /* Line heights */
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+
+  /* Font weights */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Elevation */
+  --shadow-card: 0 1px 3px rgba(34, 37, 42, 0.08);
+
+  /* Layout */
+  --container-max: 1200px;
+}
 
 *,
 *::before,
@@ -14,8 +68,8 @@ body {
 }
 
 body {
-  background-color: #ffffff;
-  color: #111111;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   font-family:
     var(--font-inter),
     system-ui,
@@ -23,6 +77,8 @@ body {
     "Segoe UI",
     Roboto,
     sans-serif;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
