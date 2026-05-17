@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { ERROR_PAGE } from "@/constants/copy";
 import styles from "./error.module.css";
 
 type Props = {
@@ -8,12 +10,16 @@ type Props = {
 };
 
 export default function Error({ error, reset }: Props) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
   return (
     <main className={styles.page}>
-      <h2 className={styles.title}>Something went wrong</h2>
-      <p className={styles.message}>{error.message}</p>
+      <h2 className={styles.title}>{ERROR_PAGE.TITLE}</h2>
+      <p className={styles.message}>{ERROR_PAGE.MESSAGE}</p>
       <button className={styles.button} onClick={reset}>
-        Try again
+        {ERROR_PAGE.RETRY}
       </button>
     </main>
   );

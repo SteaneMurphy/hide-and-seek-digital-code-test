@@ -9,6 +9,7 @@ out
 next-env.d.ts
 
 # environment
+.env
 .env*.local
 
 # editor / OS
