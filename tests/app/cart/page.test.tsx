@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import CartPage from "@/app/cart/page";
+import ShoppingCartPage from "@/app/cart/page";
 
 jest.mock("next/link", () => ({
   __esModule: true,
@@ -33,16 +33,16 @@ const mockBook2 = {
 
 const mockStore = (useCartStore as unknown as jest.Mock);
 
-describe("CartPage", () => {
+describe("ShoppingCartPage", () => {
   it("shows the empty state message when the cart has no items", () => {
     mockStore.mockReturnValue({ items: [], removeItem: jest.fn() });
-    render(<CartPage />);
+    render(<ShoppingCartPage />);
     expect(screen.getByText(/your cart is empty/i)).toBeInTheDocument();
   });
 
   it("shows a 'Continue shopping' link to / in the empty state", () => {
     mockStore.mockReturnValue({ items: [], removeItem: jest.fn() });
-    render(<CartPage />);
+    render(<ShoppingCartPage />);
     expect(screen.getByRole("link", { name: /continue shopping/i })).toHaveAttribute("href", "/");
   });
 
@@ -51,7 +51,7 @@ describe("CartPage", () => {
       items: [{ book: mockBook, quantity: 1 }],
       removeItem: jest.fn(),
     });
-    render(<CartPage />);
+    render(<ShoppingCartPage />);
     expect(screen.getByText("The Great Gatsby")).toBeInTheDocument();
   });
 
@@ -63,7 +63,7 @@ describe("CartPage", () => {
       ],
       removeItem: jest.fn(),
     });
-    render(<CartPage />);
+    render(<ShoppingCartPage />);
     expect(screen.getByText("$25.00")).toBeInTheDocument();
   });
 });
