@@ -8,21 +8,26 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
+    "db:seed": "tsx db/seed.ts"
   },
   "dependencies": {
     "next": "^15.1.0",
+    "pg": "^8.20.0",
     "react": "^19",
     "react-dom": "^19"
   },
   "devDependencies": {
     "@types/node": "^22",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.4.2",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.1.0",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "^3.3.3",
+    "tsx": "^4.22.1",
     "typescript": "^5"
   }
 }

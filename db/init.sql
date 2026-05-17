@@ -1,8 +1,8 @@
 -- BookHaven schema.
 -- Executed once by the Postgres container's docker-entrypoint-initdb.d
 -- on first start (when the data volume is empty). Schema only; seed data
--- is loaded by the application-side seed script (see PR 5) which reads
--- src/lib/books.ts so the catalogue stays in one source of truth.
+-- is loaded by the application-side seed script (db/seed.ts) which reads
+-- src/shared/books.ts so the catalogue stays in one source of truth.
 
 CREATE TABLE IF NOT EXISTS books (
   id          INTEGER PRIMARY KEY,
