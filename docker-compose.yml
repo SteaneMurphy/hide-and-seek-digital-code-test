@@ -22,5 +22,19 @@ services:
       timeout: 5s
       retries: 5
 
+  seed:
+    image: node:20-alpine
+    container_name: bookhaven-seed
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bookhaven}:${POSTGRES_PASSWORD:-bookhaven}@db:5432/${POSTGRES_DB:-bookhaven}
+    command: npx tsx db/seed.ts
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
 volumes:
   bookhaven-db-data:
