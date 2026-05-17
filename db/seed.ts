@@ -1,4 +1,4 @@
-// Seed the `books` table from src/lib/books.ts — single source of truth.
+// Seed the `books` table from src/shared/books.ts — single source of truth.
 // Idempotent: re-running updates rows in place via ON CONFLICT, so edits to
 // books.ts propagate without wiping the table (and without regenerating SKUs).
 //
@@ -6,7 +6,7 @@
 // Requires DATABASE_URL in the environment (see .env.example).
 
 import { Pool } from "pg";
-import { books } from "../src/lib/books";
+import { books } from "../src/shared/books";
 
 async function main() {
   const connectionString = process.env.DATABASE_URL;

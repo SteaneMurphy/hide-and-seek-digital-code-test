@@ -1,4 +1,4 @@
-import { pool } from "@/lib/db";
+import { pool } from "@/server/database-client";
 
 export type BookRow = {
   id: number;
