@@ -22,6 +22,23 @@ services:
       timeout: 5s
       retries: 5
 
+  app:
+    image: node:20-slim
+    container_name: bookhaven-app
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bookhaven}:${POSTGRES_PASSWORD:-bookhaven}@db:5432/${POSTGRES_DB:-bookhaven}
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    command: npm run dev
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
   seed:
     image: node:20-alpine
     container_name: bookhaven-seed
