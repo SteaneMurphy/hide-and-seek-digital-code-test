@@ -5,6 +5,7 @@
 // Usage:  npm run db:seed
 // Requires DATABASE_URL in the environment (see .env.example).
 
+import "dotenv/config";
 import { Pool } from "pg";
 import { books } from "../src/shared/books";
 
