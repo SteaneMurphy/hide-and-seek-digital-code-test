@@ -8,6 +8,7 @@ export const HEADER = {
 export const BUTTONS = {
   ADD_TO_CART: "Add to Cart",
   REMOVE: "Remove",
+  CHECKOUT: "Continue to Checkout",
 } as const;
 
 export const CART_PAGE = {
