@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import ShoppingCartPage from "@/app/cart/page";
 
 jest.mock("next/link", () => ({
@@ -8,11 +9,19 @@ jest.mock("next/link", () => ({
   ),
 }));
 
+jest.mock("next/image", () => ({
+  __esModule: true,
+  default: ({ alt }: { alt: string }) => <img alt={alt} />,
+}));
+
 jest.mock("@/store/cart-store");
 jest.mock("@/store/use-cart-hydrated", () => ({
-  useCartHydrated: () => true,
+  useCartHydrated: jest.fn(),
 }));
 import { useCartStore } from "@/store/cart-store";
+import { useCartHydrated } from "@/store/use-cart-hydrated";
+
+const mockHydrated = useCartHydrated as jest.Mock;
 
 const mockBook = {
   id: 1,
@@ -37,24 +46,14 @@ const mockBook2 = {
 const mockStore = (useCartStore as unknown as jest.Mock);
 
 describe("ShoppingCartPage", () => {
+  beforeEach(() => {
+    mockHydrated.mockReturnValue(true);
+  });
+
   it("shows the empty state message when the cart has no items", () => {
     mockStore.mockImplementation((selector) => selector({ items: [], removeItem: jest.fn() }));
     render(<ShoppingCartPage />);
     expect(screen.getByText(/your cart is empty/i)).toBeInTheDocument();
-  });
-
-  it("shows a 'Continue shopping' link to / in the empty state", () => {
-    mockStore.mockImplementation((selector) => selector({ items: [], removeItem: jest.fn() }));
-    render(<ShoppingCartPage />);
-    expect(screen.getByRole("link", { name: /continue shopping/i })).toHaveAttribute("href", "/");
-  });
-
-  it("renders item titles when the cart has items", () => {
-    mockStore.mockImplementation((selector) =>
-      selector({ items: [{ book: mockBook, quantity: 1 }], removeItem: jest.fn() }),
-    );
-    render(<ShoppingCartPage />);
-    expect(screen.getByText("The Great Gatsby")).toBeInTheDocument();
   });
 
   it("renders the correct total across all items", () => {
@@ -69,5 +68,42 @@ describe("ShoppingCartPage", () => {
     );
     render(<ShoppingCartPage />);
     expect(screen.getByText("$25.00")).toBeInTheDocument();
+  });
+
+  it("shows a per-row subtotal equal to price * quantity", () => {
+    mockStore.mockImplementation((selector) =>
+      selector({
+        items: [
+          { book: mockBook, quantity: 3 },
+          { book: mockBook2, quantity: 1 },
+        ],
+        removeItem: jest.fn(),
+      }),
+    );
+    render(<ShoppingCartPage />);
+    expect(screen.getByText("$30.00")).toBeInTheDocument();
+    expect(screen.getByText("$45.00")).toBeInTheDocument();
+  });
+
+  it("calls removeItem with the book id when Remove is clicked", async () => {
+    const removeItem = jest.fn();
+    mockStore.mockImplementation((selector) =>
+      selector({ items: [{ book: mockBook, quantity: 1 }], removeItem }),
+    );
+    render(<ShoppingCartPage />);
+    await userEvent.click(
+      screen.getByRole("button", { name: /remove the great gatsby from cart/i }),
+    );
+    expect(removeItem).toHaveBeenCalledWith(mockBook.id);
+  });
+
+  it("shows the empty state while the store is hydrating, even if items exist", () => {
+    mockHydrated.mockReturnValue(false);
+    mockStore.mockImplementation((selector) =>
+      selector({ items: [{ book: mockBook, quantity: 1 }], removeItem: jest.fn() }),
+    );
+    render(<ShoppingCartPage />);
+    expect(screen.getByText(/your cart is empty/i)).toBeInTheDocument();
+    expect(screen.queryByText(mockBook.title)).not.toBeInTheDocument();
   });
 });

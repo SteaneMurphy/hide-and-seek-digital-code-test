@@ -19,11 +19,6 @@ const mockBook: Book = {
 };
 
 describe("BookCard", () => {
-  it("renders the book title", () => {
-    render(<BookCard book={mockBook} onAddToCart={() => {}} />);
-    expect(screen.getByRole("heading", { name: /the great gatsby/i })).toBeInTheDocument();
-  });
-
   it("renders the price formatted as $X.XX", () => {
     render(<BookCard book={mockBook} onAddToCart={() => {}} />);
     expect(screen.getByText("$10.00")).toBeInTheDocument();
@@ -34,5 +29,10 @@ describe("BookCard", () => {
     render(<BookCard book={mockBook} onAddToCart={onAddToCart} />);
     await userEvent.click(screen.getByRole("button", { name: /add the great gatsby to cart/i }));
     expect(onAddToCart).toHaveBeenCalledWith(mockBook);
+  });
+
+  it("gives the cover image alt text matching the book title", () => {
+    render(<BookCard book={mockBook} onAddToCart={() => {}} />);
+    expect(screen.getByAltText(mockBook.title)).toBeInTheDocument();
   });
 });

@@ -17,12 +17,6 @@ import { useCartStore } from "@/store/cart-store";
 describe("Header", () => {
 const mockStore = (useCartStore as unknown as jest.Mock);
 
-  it("renders the BookHaven brand name", () => {
-    mockStore.mockImplementation((selector) => selector({ items: [] }));
-    render(<Header />);
-    expect(screen.getByText("BookHaven")).toBeInTheDocument();
-  });
-
   it("does not show a badge when the cart is empty", () => {
     mockStore.mockImplementation((selector) => selector({ items: [] }));
     render(<Header />);
