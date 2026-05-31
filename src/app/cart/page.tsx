@@ -58,7 +58,6 @@ export default function ShoppingCartPage() {
                   type="button"
                   className={styles.qtyBtn}
                   onClick={() => decrementItem(book.id)}
-                  disabled={quantity <= 1}
                   aria-label={`Decrease quantity of ${book.title}`}
                 >
                   {BUTTONS.DECREASE_QTY}

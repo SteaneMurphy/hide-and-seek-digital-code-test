@@ -52,10 +52,10 @@ describe("cart store", () => {
     expect(getState().items[0].quantity).toBe(MAX_QUANTITY - 1);
 
     getState().decrementItem(bookB.id);
-    expect(getState().items[1].quantity).toBe(1);
+    expect(getState().items).toEqual([{ book: bookA, quantity: MAX_QUANTITY - 1 }]);
 
     getState().removeItem(bookA.id);
-    expect(getState().items).toEqual([{ book: bookB, quantity: 1 }]);
+    expect(getState().items).toEqual([]);
 
     getState().clearCart();
     expect(getState().items).toEqual([]);

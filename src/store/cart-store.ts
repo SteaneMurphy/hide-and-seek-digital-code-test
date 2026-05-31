@@ -52,13 +52,18 @@ export const useCartStore = create<CartState>()(
         })),
 
       decrementItem: (bookId) =>
-        set((state) => ({
-          items: state.items.map((i) =>
-            i.book.id === bookId
-              ? { ...i, quantity: Math.max(i.quantity - 1, 1) }
-              : i,
-          ),
-        })),
+        set((state) => {
+          const existing = state.items.find((i) => i.book.id === bookId);
+          if (!existing) return state;
+          if (existing.quantity <= 1) {
+            return { items: state.items.filter((i) => i.book.id !== bookId) };
+          }
+          return {
+            items: state.items.map((i) =>
+              i.book.id === bookId ? { ...i, quantity: i.quantity - 1 } : i,
+            ),
+          };
+        }),
 
       clearCart: () => set({ items: [] }),
     }),
