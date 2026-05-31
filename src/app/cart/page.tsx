@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCartStore } from "@/store/cart-store";
 import { useCartHydrated } from "@/store/use-cart-hydrated";
@@ -35,6 +36,15 @@ export default function ShoppingCartPage() {
       <ul className={styles.list}>
         {items.map(({ book, quantity }) => (
           <li key={book.id} className={styles.item}>
+            <div className={styles.thumb}>
+              <Image
+                src={book.cover}
+                alt={book.title}
+                fill
+                sizes="56px"
+                className={styles.thumbImage}
+              />
+            </div>
             <div className={styles.itemInfo}>
               <span className={styles.itemTitle}>{book.title}</span>
               <span className={styles.itemMeta}>
@@ -60,6 +70,9 @@ export default function ShoppingCartPage() {
         <span className={styles.summaryLabel}>{CART_PAGE.TOTAL}</span>
         <span className={styles.summaryValue}>${total.toFixed(2)}</span>
       </div>
+      <button type="button" className={styles.checkoutBtn}>
+        {BUTTONS.CHECKOUT}
+      </button>
     </main>
   );
 }
