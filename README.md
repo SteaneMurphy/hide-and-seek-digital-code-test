@@ -65,6 +65,15 @@ What's deliberately not covered:
 - **Non-uniform book covers.** The seed covers have different aspect ratios and baked-in white margins. `object-fit: cover` clipped titles on outliers; `contain` exposed the inconsistent margins. Final solution: `contain` against a flush white image-area background, narrowed wrapper to 3:4 to minimise letterbox on squarer covers, padding on the `<img>` itself for breathing room. `next/image` with `fill` is absolutely positioned, so padding on the wrapper does nothing — had to put it on the image element.
 - **Cart UX nuance.** First pass had the `−` button disabled at quantity 1 to "prevent accidental deletion." Corrected: standard cart UX is decrement-to-zero removes the row, and disabling breaks the user's mental model. Lesson: defer to established e-commerce patterns when in doubt.
 
+### Working with AI (Claude)
+
+The entire project was built using Claude as a pair-programming partner. The workflow:
+
+- **Direction first, plan second.** I set the architecture and ground rules up front. Claude then proposed a plan against those constraints, which I reviewed and adjusted before any code was written.
+- **One thing at a time.** Each feature or fix shipped as its own commit and PR, tested and checked as it landed — not batched into a mono-PR. Made it easy to course-correct mid-task.
+- **Questions over assumptions.** Whenever Claude introduced unfamiliar syntax, library behaviour, or logic, I asked until I understood it. Better than merging code I couldn't defend in review.
+- **Design decisions stayed with me.** All product, UX, and high-level architecture choices were mine. Claude surfaced options and trade-offs; I picked the direction. The cart decrement-to-remove correction noted in Challenges is a representative example — Claude initially proposed disable-at-1; I overrode based on standard cart UX.
+
 ### Feedback on the brief
 
 **What was clear:**
@@ -79,6 +88,56 @@ What's deliberately not covered:
 - **"SKU"** as a required homepage field is ambiguous when paired with seed data that only has ISBN. Stating "use whichever identifier you think is appropriate, justify in Developer Decisions" would invite the thinking the test seems to be probing for.
 - **"Total Tests - 11"** as a hard number nudges candidates either toward padding with smoke tests or toward skipping critical coverage. "11+ meaningful tests across these critical paths" would be clearer about the intent.
 - **`src/lib/books.ts`** is referenced as the seed source, but the actual seed location varies by chosen stack — and "lib" doesn't make sense in a structure where DB code goes under `server/`. Worth genericising the path reference.
+
+---
+
+## ▶️ Running Locally
+
+Requires Node 20+ and Docker.
+
+### 1. Create `.env` in the project root
+
+```bash
+POSTGRES_DB=bookhaven
+POSTGRES_USER=bookhaven
+POSTGRES_PASSWORD=bookhaven
+POSTGRES_PORT=5432
+DATABASE_URL=postgresql://bookhaven:bookhaven@localhost:5432/bookhaven
+```
+
+### 2. Pick one of the two run modes
+
+#### Option A — app on host, Postgres in Docker (recommended for development)
+
+```bash
+docker compose up -d db    # start Postgres in the background
+npm install
+npm run db:seed            # seed the books table (run once)
+npm run dev                # app at http://localhost:3000
+```
+
+#### Option B — everything in Docker
+
+```bash
+docker compose up          # db + seed + app all come up
+                           # app at http://localhost:3000
+```
+
+### Other commands
+
+```bash
+npm test                   # Jest suite (4 suites, 12 tests)
+npm run build              # production build
+npm run lint               # ESLint
+npm run format             # Prettier write
+```
+
+### Tearing down
+
+```bash
+docker compose down        # stop containers
+docker compose down -v     # stop and wipe the Postgres volume (fresh seed next time)
+```
 
 ## 🎯 The Mission
 
