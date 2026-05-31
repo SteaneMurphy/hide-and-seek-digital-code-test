@@ -14,8 +14,129 @@
 
 ## 👋🏼 Developer Decisions
 
+### Framework & Libraries
+
+- **Next.js 15 (App Router)** over TanStack + Vite. The brief leans on server-side data fetching from Postgres, and the App Router's React Server Components fit that directly without a separate data-loading layer. Built-in `next/image` optimisation, file-based routing, and the loading/error route conventions were all relevant to the requirements.
+- **TypeScript (strict)** throughout. The shared `Book` type lives in `src/shared/books.ts` so the DB layer, the store, and the UI all reference the same shape.
+- **CSS Modules** over Tailwind. Design tokens (colour, spacing, type scale, radius) live as custom properties in `src/app/globals.css`; every component CSS module consumes them via `var(--…)`. This keeps the markup readable, the design system centralised, and avoids the utility-soup readability hit on a small app.
+- **PostgreSQL + Docker** (the brief's preferred path). Schema lives in `docker-compose.yml`'s init script; the repository in `src/server/repositories/books-repository.ts` returns typed rows.
+- **Zustand** for cart state. Minimal API, no Provider, persist middleware out of the box. Picked over Redux for the boilerplate-to-functionality ratio at this scale, and over Context for the perf characteristics (selector subscriptions).
+- **Jest + React Testing Library** via `next/jest` for the test setup.
+
+### State Management
+
+- One Zustand store (`useCartStore`) holds the cart; everything else is server-fetched or local UI state.
+- **Selector subscriptions throughout** — `useCartStore((s) => s.items)` rather than `const { items } = useCartStore()`. This means a component only re-renders when its specific slice changes; the header badge doesn't re-render when an unrelated UI change happens, the cart page doesn't re-render when the badge count changes elsewhere.
+- **`persist` middleware** handles localStorage round-tripping for free.
+- **`useCartHydrated` hook** sits next to the store and returns `true` only after persist's rehydration completes. Components gate hydration-dependent UI (the badge, the cart contents) on this so the server-rendered HTML matches the first client render — avoids the React hydration-mismatch warning, and avoids the badge flashing in after first paint.
+
+### Architecture
+
+- `src/app/` — routes only.
+- `src/components/<feature>/` — one folder per component, `.tsx` colocated with `.module.css`.
+- `src/server/` — anything that must run server-side (DB client, repositories). Runtime tier is visible in the import path so it's obvious at a glance what a file is safe to import where.
+- `src/shared/` — types and utilities safe to import from both server and client.
+- `src/store/` — Zustand store + the hydration hook (colocated because the hook only exists due to the store's persist middleware).
+- `src/constants/` — copy, routes, and cart limits. Centralising strings as the brief asks; also gives one place to change "Add to Cart" → "Add to Bag" if someone wanted to.
+- **Error and loading states** are wired via the App Router conventions: `src/app/error.tsx` is the error boundary, `src/app/loading.tsx` is the suspense fallback for the home route's DB fetch.
+
+### Testing Strategy
+
+12 tests across 4 suites. Started higher and **culled the smoke tests** that passed regardless of real behaviour (a `renders heading` test against a mocked-out grid doesn't prove the grid works) in favour of tests that exercise behaviour.
+
+What's covered:
+
+- **Cart store** — one integration test walking the full lifecycle: add → dedupe → MAX_QUANTITY cap → increment-at-cap → decrement → decrement-at-1-removes → remove → clear. Integration over a flock of one-assertion units because the actions interact and the lifecycle is more revealing than any single transition.
+- **Money math** — total across multiple items, plus per-row subtotal at quantity > 1 (separate assertion because a bug in `price × qty` at qty 1 would be invisible against `price × 1`).
+- **UI → store wiring** — add-to-cart click, remove click, increment click. The decrement wire follows the same pattern, covered by the store test's remove-at-1 transition.
+- **Hydration safety** — the cart page renders the empty state while the store is still rehydrating, even if items exist. This defends the non-obvious `useCartHydrated` gate; without the test, a regression that drops the gate would flash an empty cart on every refresh.
+- **Accessibility** — book cover image alt text. Highest-value a11y assertion since screen readers depend on it for the grid.
+- **Conditional UI** — header badge present/absent based on item count, badge sums quantities correctly.
+
+What's deliberately not covered:
+
+- "Renders the heading" / "renders the brand" smoke — would pass with the app completely broken.
+- Continue-shopping link `href` — implementation detail, behaviour was about navigating home not about the URL.
+
+### Challenges & Learnings
+
+- **SSR/persist hydration.** First pass at Zustand persist flashed a populated cart on initial render that then briefly emptied when the persist middleware loaded. The `useCartHydrated` hook fixes this by returning `false` on server and first client render, flipping `true` only after `onFinishHydration` fires. Once I had the gate, I added a test specifically for "shows empty state while hydrating even if items exist" so future-me can't accidentally remove it.
+- **SKU vs ISBN.** The brief asks for "SKU" on the homepage card, but the seed data only has ISBN. Chose to **display ISBN** (the customer-meaningful book identifier) and keep an internal SKU column (UUID) in the database as the stable cart/order reference. Real-world cart systems separate these — ISBN is what users search by, SKU is what survives edition changes. Flagged here because it's the most likely thing a reviewer might query.
+- **Non-uniform book covers.** The seed covers have different aspect ratios and baked-in white margins. `object-fit: cover` clipped titles on outliers; `contain` exposed the inconsistent margins. Final solution: `contain` against a flush white image-area background, narrowed wrapper to 3:4 to minimise letterbox on squarer covers, padding on the `<img>` itself for breathing room. `next/image` with `fill` is absolutely positioned, so padding on the wrapper does nothing — had to put it on the image element.
+- **Cart UX nuance.** First pass had the `−` button disabled at quantity 1 to "prevent accidental deletion." Corrected: standard cart UX is decrement-to-zero removes the row, and disabling breaks the user's mental model. Lesson: defer to established e-commerce patterns when in doubt.
+
+### Working with AI (Claude)
+
+The entire project was built using Claude as a pair-programming partner. The workflow:
+
+- **Direction first, plan second.** I set the architecture and ground rules up front. Claude then proposed a plan against those constraints, which I reviewed and adjusted before any code was written.
+- **One thing at a time.** Each feature or fix shipped as its own commit and PR, tested and checked as it landed — not batched into a mono-PR. Made it easy to course-correct mid-task.
+- **Questions over assumptions.** Whenever Claude introduced unfamiliar syntax, library behaviour, or logic, I asked until I understood it. Better than merging code I couldn't defend in review.
+- **Design decisions stayed with me.** All product, UX, and high-level architecture choices were mine. Claude surfaced options and trade-offs; I picked the direction. The cart decrement-to-remove correction noted in Challenges is a representative example — Claude initially proposed disable-at-1; I overrode based on standard cart UX.
+
+### Feedback on the brief
+
+**What was clear:**
+
+- Concrete requirements list, well-organised by section.
+- The "Bonus Points" list is good — gives direction without being prescriptive.
+- The naming conventions section is helpful (the explicit `BookCard not Card` / `ShoppingCartPage not CartPage` examples remove ambiguity).
+- The "What We're Evaluating" checklist is useful as a self-review tool.
+
+**What could be improved:**
+
+- **"SKU"** as a required homepage field is ambiguous when paired with seed data that only has ISBN. Stating "use whichever identifier you think is appropriate, justify in Developer Decisions" would invite the thinking the test seems to be probing for.
+- **"Total Tests - 11"** as a hard number nudges candidates either toward padding with smoke tests or toward skipping critical coverage. "11+ meaningful tests across these critical paths" would be clearer about the intent.
+- **`src/lib/books.ts`** is referenced as the seed source, but the actual seed location varies by chosen stack — and "lib" doesn't make sense in a structure where DB code goes under `server/`. Worth genericising the path reference.
+
+---
+
+## ▶️ Running Locally
+
+Requires Node 20+ and Docker.
+
+### 1. Create `.env` in the project root
+
 ```bash
-# Please add a high level overview of your decisions here after you have completed the project
+POSTGRES_DB=bookhaven
+POSTGRES_USER=bookhaven
+POSTGRES_PASSWORD=bookhaven
+POSTGRES_PORT=5432
+DATABASE_URL=postgresql://bookhaven:bookhaven@localhost:5432/bookhaven
+```
+
+### 2. Pick one of the two run modes
+
+#### Option A — app on host, Postgres in Docker (recommended for development)
+
+```bash
+docker compose up -d db    # start Postgres in the background
+npm install
+npm run db:seed            # seed the books table (run once)
+npm run dev                # app at http://localhost:3000
+```
+
+#### Option B — everything in Docker
+
+```bash
+docker compose up          # db + seed + app all come up
+                           # app at http://localhost:3000
+```
+
+### Other commands
+
+```bash
+npm test                   # Jest suite (4 suites, 12 tests)
+npm run build              # production build
+npm run lint               # ESLint
+npm run format             # Prettier write
+```
+
+### Tearing down
+
+```bash
+docker compose down        # stop containers
+docker compose down -v     # stop and wipe the Postgres volume (fresh seed next time)
 ```
 
 ## 🎯 The Mission
