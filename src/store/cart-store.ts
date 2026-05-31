@@ -12,6 +12,8 @@ type CartState = {
   items: CartItem[];
   addItem: (book: Book) => void;
   removeItem: (bookId: number) => void;
+  incrementItem: (bookId: number) => void;
+  decrementItem: (bookId: number) => void;
   clearCart: () => void;
 };
 
@@ -39,6 +41,29 @@ export const useCartStore = create<CartState>()(
         set((state) => ({
           items: state.items.filter((i) => i.book.id !== bookId),
         })),
+
+      incrementItem: (bookId) =>
+        set((state) => ({
+          items: state.items.map((i) =>
+            i.book.id === bookId
+              ? { ...i, quantity: Math.min(i.quantity + 1, MAX_QUANTITY) }
+              : i,
+          ),
+        })),
+
+      decrementItem: (bookId) =>
+        set((state) => {
+          const existing = state.items.find((i) => i.book.id === bookId);
+          if (!existing) return state;
+          if (existing.quantity <= 1) {
+            return { items: state.items.filter((i) => i.book.id !== bookId) };
+          }
+          return {
+            items: state.items.map((i) =>
+              i.book.id === bookId ? { ...i, quantity: i.quantity - 1 } : i,
+            ),
+          };
+        }),
 
       clearCart: () => set({ items: [] }),
     }),

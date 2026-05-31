@@ -9,6 +9,8 @@ export const BUTTONS = {
   ADD_TO_CART: "Add to Cart",
   REMOVE: "Remove",
   CHECKOUT: "Continue to Checkout",
+  DECREASE_QTY: "−",
+  INCREASE_QTY: "+",
 } as const;
 
 export const CART_PAGE = {
