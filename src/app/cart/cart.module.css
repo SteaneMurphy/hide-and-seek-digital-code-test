@@ -96,6 +96,44 @@
   flex-shrink: 0;
 }
 
+.qtyStepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.qtyBtn {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  color: var(--color-text);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  line-height: 1;
+  transition: background 0.15s ease;
+}
+
+.qtyBtn:hover:not(:disabled) {
+  background: var(--color-border);
+}
+
+.qtyBtn:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+.qtyValue {
+  min-width: 28px;
+  text-align: center;
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-sm);
+}
+
 .itemPrice {
   font-weight: var(--weight-semibold);
   color: var(--color-text);

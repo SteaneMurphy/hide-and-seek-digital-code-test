@@ -97,6 +97,23 @@ describe("ShoppingCartPage", () => {
     expect(removeItem).toHaveBeenCalledWith(mockBook.id);
   });
 
+  it("calls incrementItem with the book id when the + button is clicked", async () => {
+    const incrementItem = jest.fn();
+    mockStore.mockImplementation((selector) =>
+      selector({
+        items: [{ book: mockBook, quantity: 1 }],
+        removeItem: jest.fn(),
+        incrementItem,
+        decrementItem: jest.fn(),
+      }),
+    );
+    render(<ShoppingCartPage />);
+    await userEvent.click(
+      screen.getByRole("button", { name: /increase quantity of the great gatsby/i }),
+    );
+    expect(incrementItem).toHaveBeenCalledWith(mockBook.id);
+  });
+
   it("shows the empty state while the store is hydrating, even if items exist", () => {
     mockHydrated.mockReturnValue(false);
     mockStore.mockImplementation((selector) =>

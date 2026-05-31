@@ -23,7 +23,7 @@ const bookB: Book = {
 };
 
 describe("cart store", () => {
-  it("supports the full add / dedupe / cap / remove / clear lifecycle", () => {
+  it("supports the full add / dedupe / cap / increment / decrement / remove / clear lifecycle", () => {
     const { getState } = useCartStore;
 
     getState().clearCart();
@@ -44,6 +44,15 @@ describe("cart store", () => {
       getState().addItem(bookA);
     }
     expect(getState().items[0].quantity).toBe(MAX_QUANTITY);
+
+    getState().incrementItem(bookA.id);
+    expect(getState().items[0].quantity).toBe(MAX_QUANTITY);
+
+    getState().decrementItem(bookA.id);
+    expect(getState().items[0].quantity).toBe(MAX_QUANTITY - 1);
+
+    getState().decrementItem(bookB.id);
+    expect(getState().items[1].quantity).toBe(1);
 
     getState().removeItem(bookA.id);
     expect(getState().items).toEqual([{ book: bookB, quantity: 1 }]);
